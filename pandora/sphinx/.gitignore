@@ -1,0 +1,8 @@
+.*
+*.local
+*.old
+*.pyc
+local/*
+conf/local.py
+
+!.gitignore

@@ -1,0 +1,53 @@
+﻿<!DOCTYPE html>
+<html lang="chs">
+<head>
+	{% include '_pagehead.html' %}
+</head>
+
+<body>
+
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">LeggieLeggy!视频</a>
+            </div>
+            <div class="navbar-form navbar-right">
+                <a href="#" class="btn btn-success">上传视频</a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <form class="navbar-form navbar-right" role="form">
+
+                    <input type="text" placeholder="搜索..." class="form-control" />
+
+                    <button type="submit" class="btn btn-success">搜索</button>
+                </form>
+                <div class="navbar-form navbar-right">
+                    <a href="#" class="btn btn-success">登录</a>
+                    <a href="#" class="btn btn-success">注册账号</a>
+                </div>
+
+            </div>
+            <!--/.navbar-collapse -->
+        </div>
+    </nav>
+
+    <div>
+        <h1>头条</h1>
+    </div>
+
+    <div>
+        <h1>热门视频etc</h1>
+    </div>
+
+
+
+    <hr>
+
+    {% include '_footer.html' %}
+    </div>
+    <!-- /container -->
+
+
+    {% include '_footerIncludeScript.html' %}
+</body>
+</html>

@@ -1,0 +1,25 @@
+syntax on
+
+set nu
+set ruler
+set showcmd
+set backspace=indent,eol,start
+set nocp 	" no compatible
+set sc 		" smart case
+set ts=4	" tab size
+set si		" smart indent
+set sw=4    	" shift width
+
+autocmd InsertLeave * se nocul
+autocmd InsertEnter * se cul
+
+autocmd filetype python setlocal et sta sw=4 sts=4
+
+set fencs=utf-8,ucs-bom,shift-jis,gb18030,gbk,gb2312,cp936
+set termencoding=utf-8
+set encoding=utf-8
+set fileencodings=ucs-bom,utf-8,cp936
+set fileencoding=utf-8
+
+" for tagbar
+nmap <F8> :TagbarToggle<CR>

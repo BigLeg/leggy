@@ -1,0 +1,16 @@
+#######
+# CONFIG SETUP do not change or configs will break
+#    this goes a the top of any config file. it adds stuff to the global config
+#    context. 
+import context
+cfg = context.ctx()
+cfg.push(__name__)
+# END CONFIG SETUP
+#######
+
+##### THE LAST line of instance-only variables go here.
+#     THIS is a good place for database passwords.
+
+cfg.mode = 'dev-frontend'
+
+

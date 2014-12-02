@@ -1,0 +1,39 @@
+﻿<!DOCTYPE html>
+<html lang="chs">
+<head>
+    {% include '_pagehead.html' %}
+
+    <title>{{ 'Nyanya' }}</title>
+
+</head>
+
+<body>
+
+{% include '_globalNavi.html' %}
+
+    <div id="VideoPlayer">
+        <h1>{{video.title}}</h1>
+		<video autoplay controls>
+			<source src="/videos/{{ video.userid }}/{{ video.videoid }}.webm" type="video/webm"/>
+		</video>
+    </div>
+
+    <div id="Description">
+        <h1>简介</h1>
+    </div>
+    <div id="Comments">
+        <h1>评论区</h1>
+    </div>
+
+
+    <hr>
+    {% include '_footer.html' %}
+    </div>
+    <!-- /container -->
+
+
+
+</body>
+
+{% include '_footerIncludeScript.html' %}
+</html>
