@@ -30,6 +30,8 @@ app.register_blueprint(video_site, url_prefix='/video')
 app.register_blueprint(auth_site, url_prefix='/auth')
 app.register_blueprint(test_site, url_prefix='/test')
 
+app.add_url_rule('/data', 'data', None)
+
 bootstrap = Bootstrap(app)
 mail.init_app(app)
 moment = Moment(app)

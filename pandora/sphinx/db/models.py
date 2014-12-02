@@ -69,10 +69,12 @@ class Video(db.Model):
     __tablename__ = 'videos'
     
     MAX_TITLE   = 100
+    MAX_URL     = 256
     
     id              = db.Column(db.Integer, primary_key=True)
     title           = db.Column(db.String(MAX_TITLE))
     desc            = db.Column(db.Text)
+    url             = db.Column(db.String(MAX_URL))
     play_count      = db.Column(db.Integer, default=0)
     merit           = db.Column(db.Integer, default=0)
     demerit         = db.Column(db.Integer, default=0)

@@ -1,3 +1,4 @@
+import functools
 from flask_login import UserMixin
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from flask import current_app
@@ -8,25 +9,19 @@ from data.cache import SphinxCache
 
 cache = SphinxCache()
 
-class Video(object):
-    def __init__(self, title, uid, vid, cnt, **kwargs):
-        super(User, self).__init__(**kwargs)
-        self.title = title
-        self.userid = uid
-        self.videoid = vid
-        self.playcount = cnt
+class Auto(object):
+    def __init__(self, **kwargs):
+        super(Auto, self).__init__()
+        for k, v in kwargs.iteritems():
+            self.__dict__[k] = v
 
-class User(UserMixin):
-    def __init__(self, id, username, email, confirmed, **kwargs):
-        super(User, self).__init__(**kwargs)
-        self.id         = id
-        self.username   = username
-        self.email      = email
-        self.confirmed  = confirmed
-    
+class Video(Auto):
+    pass
+
+class User(UserMixin, Auto):
     @staticmethod
     def from_backend(_user):
-        if (_user == None):
+        if _user is None:
             return None
         else:
             return User(id=_user.id, 

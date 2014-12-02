@@ -73,6 +73,7 @@ def upload():
                 folder = get_folder()
                 if not os.path.exists(folder):
                     os.mkdir(folder)
+
                 file.save(uploaded_file_path)
 
                 # create thumbnail after saving
@@ -90,17 +91,22 @@ def upload():
             # for validation
             return simplejson.dumps({"files": [result.get_file()]})
 
-    # if request.method == 'GET':
-    #     # get all file in ./data directory
-    #     files = [ f for f in os.listdir(app.config['UPLOAD_FOLDER']) if os.path.isfile(os.path.join(app.config['UPLOAD_FOLDER'],f)) and f not in IGNORED_FILES ]
-    #
-    #     file_display = []
-    #
-    #     for f in files:
-    #         size = os.path.getsize(os.path.join(app.config['UPLOAD_FOLDER'], f))
-    #         file_saved = uploadfile(name=f, size=size)
-    #         file_display.append(file_saved.get_file())
-    #
-    #     return simplejson.dumps({"files": file_display})
+    if request.method == 'GET':
+        # get all file in ./data directory
+        files = [ f for f in os.listdir(app.config['UPLOAD_FOLDER']) if os.path.isfile(os.path.join(app.config['UPLOAD_FOLDER'],f)) and f not in IGNORED_FILES ]
+
+        file_display = []
+
+        for f in files:
+            size = os.path.getsize(os.path.join(app.config['UPLOAD_FOLDER'], f))
+            file_saved = uploadfile(name=f, size=size)
+            file_display.append(file_saved.get_file())
+
+        return simplejson.dumps({"files": file_display})
 
     return render_template('video/upload.html')
+
+# @site.route("/play/<>", methods=['GET'])
+# @login_required
+# def play():
+#     render_template('video/play.html', user=current_user, video=)
