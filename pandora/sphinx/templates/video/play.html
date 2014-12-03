@@ -2,10 +2,12 @@
 
 {% block content %}
   {{ super() }}
-  <video loop autoplay controls>
-      <source src="{{ url_for('data', filename='videos/'+user.id+'/'+video.name) }}" type="video/webm"/>
+  <div class="container">
+    <video controls class="col-md-8 col-md-offset-2">
+      <source src="{{ video.location }}" type="video/webm"/>
       HTML5 not supported!
-  </video>
+    </video>
+  </div>
 {% endblock %}
 
 {% block scripts %}

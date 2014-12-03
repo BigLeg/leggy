@@ -4,7 +4,7 @@ from flask_login import LoginManager, login_user, logout_user, login_required, c
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, ValidationError
 from wtforms.validators import Required, Length, Email, Regexp, EqualTo
 
-from data.models import User
+from model.user import User
 from util.email import send_email
 
 site = Blueprint('auth', __name__)
@@ -27,7 +27,7 @@ class LoginForm(Form):
 
 class RegistrationForm(Form):
     email = StringField('Email', validators=[Required(), Length(1, 64),
-                                           Email()])
+                                             Email()])
     username = StringField('Username', validators=[
         Required(), Length(1, 64), Regexp('^[A-Za-z][A-Za-z0-9_.]*$', 0,
                                           'Usernames must have only letters, '

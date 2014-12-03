@@ -1,16 +1,13 @@
 import os
-import PIL
-from PIL import Image
 import simplejson
 from flask import Blueprint, render_template, request, redirect, url_for
 from flask import current_app as app
 from flask_login import login_required, current_user
-from werkzeug import secure_filename
+from werkzeug.utils import secure_filename
 
-from util.upload_file import uploadfile
-
-
-ALLOWED_EXTENSIONS = set(['webm'])
+import util.video
+from model.video import Video
+from model.user import User
 
 site = Blueprint('video', __name__)
 
@@ -24,31 +21,10 @@ site = Blueprint('video', __name__)
 # def list_uservideos(userid,sort='time'):
 #     return render_template('_uservideos.html')
 
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
-
-def get_folder():
-    user_id = str(current_user.id)
-    if user_id is not None:
-        return os.path.join(app.config['VIDEOS_UPLOAD_FOLDER'], user_id)
-    else:  # TODO: raise error
-        return app.config['VIDEOS_UPLOAD_FOLDER']
-
-def get_path(filename):
-    return os.path.join(get_folder(), filename)
-
-def get_non_conflict_name(filename):
-    """
-    If file was exist already, rename it and return a new name
-    """
-    i = 1
-    name = filename
-    while os.path.exists(get_path(name)):
-        name, extension = os.path.splitext(filename)
-        name = '%s_%s%s' % (name, str(i), extension)
-        i = i + 1
-    return name
+@site.route("/manage", methods=['GET'])
+@login_required
+def manage():
+    return render_template('video/manage.html')
 
 @site.route("/upload", methods=['GET', 'POST'])
 @login_required
@@ -58,55 +34,48 @@ def upload():
 
         if file:
             filename = secure_filename(file.filename)
-            filename = get_non_conflict_name(filename)
+            filename = util.video.get_non_conflict_name(filename, current_user)
             mimetype = file.content_type
 
-            if not allowed_file(file.filename):
-                result = uploadfile(name=get_path(filename),
-                                    type=mimetype,
-                                    size=0,
-                                    not_allowed_msg="Filetype not allowed")
+            if not util.video.allowed_file(filename):
+                result = util.video.UploadResponse(name=filename,
+                                                   type=mimetype,
+                                                   size=0,
+                                                   not_allowed_msg="Filetype not allowed")
 
             else:
-                # save file to disk
-                uploaded_file_path = get_path(filename)  # TODO:
-                folder = get_folder()
-                if not os.path.exists(folder):
-                    os.mkdir(folder)
-
-                file.save(uploaded_file_path)
+                # save then record to db
+                video = Video.upload(file, filename, current_user)
 
                 # create thumbnail after saving
                 # if mimetype.startswith('image'):
                 #     create_thumbnai(filename)
 
-                # get file size after saving
-                size = os.path.getsize(uploaded_file_path)
-
                 # return json for js call back
-                result = uploadfile(name=filename,
-                                    type=mimetype,
-                                    size=size)
+                result = util.video.UploadResponse(name=video.title,
+                                                   type=mimetype,
+                                                   size=video.size,
+                                                   not_allowed_msg=None,
+                                                   url=url_for('video.play', id=video.id))
 
             # for validation
             return simplejson.dumps({"files": [result.get_file()]})
 
     if request.method == 'GET':
-        # get all file in ./data directory
-        files = [ f for f in os.listdir(app.config['UPLOAD_FOLDER']) if os.path.isfile(os.path.join(app.config['UPLOAD_FOLDER'],f)) and f not in IGNORED_FILES ]
-
+        videos = current_user.videos
         file_display = []
-
-        for f in files:
-            size = os.path.getsize(os.path.join(app.config['UPLOAD_FOLDER'], f))
-            file_saved = uploadfile(name=f, size=size)
+        for video in videos:
+            file_saved = util.video.UploadResponse(name=video.title,
+                                                   size=video.size,
+                                                   url=url_for('video.play', id=video.id))
             file_display.append(file_saved.get_file())
-
         return simplejson.dumps({"files": file_display})
 
-    return render_template('video/upload.html')
+    redirect(url_for('video.manage'))
 
-# @site.route("/play/<>", methods=['GET'])
-# @login_required
-# def play():
-#     render_template('video/play.html', user=current_user, video=)
+@site.route("/play/<id>", methods=['GET'])
+@login_required
+def play(id):
+    video = Video.from_id(id)
+    poster = User.from_id(video.poster_id)
+    return render_template('video/play.html', poster=poster, video=video)

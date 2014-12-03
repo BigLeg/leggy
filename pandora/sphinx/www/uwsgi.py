@@ -6,8 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 from app import create_app
 from auth import login_manager
-from db.models import db
-from data.models import cache
+from model import db, cache
 from util.email import mail
 
 app = create_app(name=__name__)

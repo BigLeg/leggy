@@ -1,3 +1,4 @@
+from flask_sqlalchemy import SQLAlchemy
 from flask_cache import Cache
 
 class SphinxCache(Cache):
@@ -6,3 +7,6 @@ class SphinxCache(Cache):
             app=app,
             config={'CACHE_TYPE': app.config['CACHE_TYPE']}
         )
+
+db = SQLAlchemy()
+cache = SphinxCache()

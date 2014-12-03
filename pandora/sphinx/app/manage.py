@@ -2,7 +2,7 @@ from flask_script import Manager, Shell
 from flask_migrate import Migrate, MigrateCommand
 
 from www.uwsgi import app, db
-from db.models import User
+from model.user import User
 
 def make_shell_context():
     return dict(app=app,

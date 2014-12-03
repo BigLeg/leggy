@@ -9,6 +9,7 @@ class BaseConfig:
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
     SQLALCHEMY_RECORD_QUERIES = True
     VIDEOS_UPLOAD_FOLDER = '/data/videos'
+    VIDEOS_SERVE_FOLDER = '/videos'
     MAIL_SERVER = 'postfix'
     MAIL_PORT = 25
     MAIL_USERNAME = os.environ.get('SYS_MAIL_USER') or 'no-reply'
