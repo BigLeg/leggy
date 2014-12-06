@@ -15,7 +15,8 @@ class Video(db.Model):
     id              = db.Column(db.Integer, primary_key=True)
     title           = db.Column(db.String(MAX_TITLE))
     desc            = db.Column(db.Text)
-    location        = db.Column(db.String(MAX_URL))
+    upload_location = db.Column(db.String(MAX_URL))
+    serve_location  = db.Column(db.String(MAX_URL))
     size            = db.Column(db.Integer)
     play_count      = db.Column(db.Integer, default=0)
     merit           = db.Column(db.Integer, default=0)
@@ -44,10 +45,16 @@ class Video(db.Model):
         file.save(upload_path)
 
         video = Video(title=filename,
-                      location=serve_path,
+                      upload_location=upload_path,
+                      serve_location=serve_path,
                       size=os.path.getsize(upload_path),
                       upload_time=datetime.datetime.now(),
                       poster_id=user.id)
         db.session.add(video)
         db.session.commit()
         return video
+
+    def delete(self):
+        os.remove(self.upload_location)
+        db.session.delete(self)
+        db.session.commit()

@@ -21,6 +21,17 @@ site = Blueprint('video', __name__)
 # def list_uservideos(userid,sort='time'):
 #     return render_template('_uservideos.html')
 
+def get_current_videos():
+    videos = current_user.videos
+    file_display = []
+    for video in videos:
+        file_saved = util.video.UploadResponse(name=video.title,
+                                               size=video.size,
+                                               url=url_for('video.play', id=video.id),
+                                               delete_url=url_for('video.delete', id=video.id))
+        file_display.append(file_saved.get_file())
+    return simplejson.dumps({"files": file_display})
+
 @site.route("/manage", methods=['GET'])
 @login_required
 def manage():
@@ -56,20 +67,14 @@ def upload():
                                                    type=mimetype,
                                                    size=video.size,
                                                    not_allowed_msg=None,
-                                                   url=url_for('video.play', id=video.id))
+                                                   url=url_for('video.play', id=video.id),
+                                                   delete_url=url_for('video.delete', id=video.id))
 
             # for validation
             return simplejson.dumps({"files": [result.get_file()]})
 
     if request.method == 'GET':
-        videos = current_user.videos
-        file_display = []
-        for video in videos:
-            file_saved = util.video.UploadResponse(name=video.title,
-                                                   size=video.size,
-                                                   url=url_for('video.play', id=video.id))
-            file_display.append(file_saved.get_file())
-        return simplejson.dumps({"files": file_display})
+        return get_current_videos()
 
     redirect(url_for('video.manage'))
 
@@ -79,3 +84,11 @@ def play(id):
     video = Video.from_id(id)
     poster = User.from_id(video.poster_id)
     return render_template('video/play.html', poster=poster, video=video)
+
+@site.route("/delete/<id>", methods=['DELETE'])
+@login_required
+def delete(id):
+    Video.from_id(id).delete()
+    return get_current_videos()
+
+

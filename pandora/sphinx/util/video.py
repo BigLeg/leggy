@@ -40,7 +40,7 @@ def get_serve_path(filename, user):
     return os.path.join(get_serve_folder(user), filename)
 
 class UploadResponse():
-    def __init__(self, name, type=None, size=None, not_allowed_msg=None, url=None):
+    def __init__(self, name, type=None, size=None, not_allowed_msg=None, url=None, delete_url=None):
         self.name = name
         self.type = type
         self.size = size
@@ -48,7 +48,7 @@ class UploadResponse():
         self.url = url
         # TODO
         self.thumbnail_url = "thumbnail/%s" % name
-        self.delete_url = "delete/%s" % name
+        self.delete_url = delete_url
         self.delete_type = "DELETE"
 
     def is_image(self):
