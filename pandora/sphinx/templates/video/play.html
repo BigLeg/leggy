@@ -8,6 +8,23 @@
       HTML5 not supported!
     </video>
   </div>
+  
+  
+    <div id="Description">
+        <h1>简介</h1>
+        <p>
+            {{ video.desc }}
+        </p>
+    </div>
+    <div id="Comments">
+        <h1>评论区</h1>
+        {% for comment in video.comments %}
+            <article>
+                <h4></h4>
+                <p>{{ comment.content }}</p>
+                <p>{{ comment.time }}</p>
+            </article>
+    </div>
 {% endblock %}
 
 {% block scripts %}
