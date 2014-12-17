@@ -23,6 +23,7 @@ class Video(db.Model):
     demerit         = db.Column(db.Integer, default=0)
     upload_time     = db.Column(db.DateTime)
 
+    # backref as poster
     poster_id       = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     comments        = db.relationship('Comment', backref='video', lazy='dynamic')

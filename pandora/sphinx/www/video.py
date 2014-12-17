@@ -1,13 +1,17 @@
 import os
 import simplejson
-from flask import Blueprint, render_template, request, redirect, url_for
+from flask import Blueprint, render_template, request, redirect, url_for, abort
 from flask import current_app as app
 from flask_login import login_required, current_user
+from flask_wtf import Form
+from wtforms import TextAreaField, SubmitField
+from wtforms.validators import DataRequired
 from werkzeug.utils import secure_filename
 
 import util.video
 from model.video import Video
 from model.user import User
+from model.comment import Comment
 
 site = Blueprint('video', __name__)
 
@@ -78,17 +82,36 @@ def upload():
 
     redirect(url_for('video.manage'))
 
-@site.route("/play/<id>", methods=['GET'])
+class CommentForm(Form):
+    body = TextAreaField("Any Comments?", validators=[DataRequired()])
+    submit = SubmitField("Comment")
+
+@site.route("/play/<id>", methods=['GET', 'POST'])
 @login_required
 def play(id):
     video = Video.from_id(id)
-    poster = User.from_id(video.poster_id)
-    return render_template('video/play.html', poster=poster, video=video)
+    comment_form = CommentForm()
+    comments = video.comments
+    if comment_form.validate_on_submit():
+        Comment.comment(replier_id=current_user.id,
+                        content=comment_form.body.data,
+                        video_id=video.id)
+        # TODO: ajax request
+        # return video.comments
+        return 'hello'
+    return render_template('video/play.html',
+                           video=video,
+                           comment_form=comment_form,
+                           comments=comments)
 
 @site.route("/delete/<id>", methods=['DELETE'])
 @login_required
 def delete(id):
-    Video.from_id(id).delete()
+    video = Video.from_id(id)
+    # TODO: better way to check authority (what about admin?)
+    if video.poster is not current_user:
+        abort(404)
+    video.delete()
     return get_current_videos()
 
 

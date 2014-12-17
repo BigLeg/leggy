@@ -1,15 +1,48 @@
 {% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
 
-{% block content %}
+{% block head %}
   {{ super() }}
-  <div class="container">
+  <link href="{{ url_for('static', filename='css/profile.css') }}" rel="stylesheet" media="screen">
+  <link href="{{ url_for('static', filename='css/post.css') }}" rel="stylesheet" media="screen">
+{% endblock %}
+
+{% block page_content %}
+  <div class="row">
     <video controls class="col-md-8 col-md-offset-2">
       <source src="{{ video.serve_location }}" type="video/webm"/>
       HTML5 not supported!
     </video>
   </div>
+  <br/>
+  <br/>
+  <div class="row">
+    <div>
+      {{ wtf.quick_form(comment_form) }}
+    </div>
+    <ul class="posts">
+      {% for comment in comments %}
+      <li class="post">
+        <div class="profile-thumbnail">
+          <a href="{{ url_for('user.profile', id=comment.replier_id) }}">
+            <img class="img-rounded profile-thumbnail"
+                 src="{{ comment.replier.gravatar(size=40) }}"
+          </a>
+        </div>
+        <div class="post-date">{{ moment(comment.time).fromNow() }}</div>
+        <div class="post-author">
+          <a href="{{ url_for('user.profile', id=comment.replier_id) }}">
+            {{ comment.replier.username }}
+          </a>
+        </div>
+        <div class="post-content">{{ comment.content }}</div>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
 {% endblock %}
 
 {% block scripts %}
   {{ super() }}
+  <script src="{{ url_for('static', filename='lib/moment-with-locales.min.js') }}"></script>
 {% endblock %}

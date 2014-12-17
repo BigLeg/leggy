@@ -32,7 +32,8 @@ class User(db.Model, UserMixin):
     portrait_path   = db.Column(db.String(MAX_PORTRAIT_PATH))
 
     videos          = db.relationship('Video', backref='poster', lazy='dynamic')
-    comments        = db.relationship('Comment', backref='replier', lazy='dynamic')
+    comments        = db.relationship('Comment', backref='replier', foreign_keys=[Comment.replier_id], lazy='dynamic')
+    replied         = db.relationship('Comment', backref='repliee', foreign_keys=[Comment.repliee_id], lazy='dynamic')
     followees = db.relationship('Follow',
                                 foreign_keys=[Follow.follower_id],
                                 backref=db.backref('follower', lazy='joined'),
