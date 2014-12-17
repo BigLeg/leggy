@@ -10,6 +10,7 @@ from werkzeug.utils import secure_filename
 
 import util.video
 from model.video import Video
+from model.comment import Comment
 from model.user import User
 from model.comment import Comment
 

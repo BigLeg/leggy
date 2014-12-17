@@ -59,3 +59,14 @@ class Video(db.Model):
         os.remove(self.upload_location)
         db.session.delete(self)
         db.session.commit()
+        
+    @staticmethod
+    def hottest(cnt=10):
+        pass
+    
+    @staticmethod
+    def newlyuploaded(cnt=10):
+        pass
+        
+    def addcomment(self,userid,content):
+        pass
