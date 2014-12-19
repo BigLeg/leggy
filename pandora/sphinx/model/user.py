@@ -1,4 +1,5 @@
 import hashlib
+import datetime
 
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
@@ -148,3 +149,10 @@ class User(db.Model, UserMixin):
         hash = hashlib.md5(self.email.encode('utf-8')).hexdigest()
         return '{url}/{hash}?s={size}&d={default}&r={rating}'.format(
             url=url, hash=hash, size=size, default=default, rating=rating)
+            
+    def addfollower(self,follower):
+        fol = Follow(follower_id = follower,followee_id = self.id)
+        db.session.add(fol)
+        db.session.commit()
+        
+    

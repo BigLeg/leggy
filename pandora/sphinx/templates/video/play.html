@@ -6,8 +6,13 @@
   <link href="{{ url_for('static', filename='css/profile.css') }}" rel="stylesheet" media="screen">
   <link href="{{ url_for('static', filename='css/post.css') }}" rel="stylesheet" media="screen">
 {% endblock %}
-
+{% from 'user/requestfriendbtn.html' import followbtnscript %}
 {% block page_content %}
+  <div>
+    <h2>{{ video.title }}</h2>
+    <a href="{{ url_for('user.profile',id=video.poster_id) }}">{{ video.poster.username }}</a>
+    <button id="followbtn" class="btn btn-primary">关注TA</button>
+  </div>
   <div class="row">
     <video controls class="col-md-8 col-md-offset-2">
       <source src="{{ video.serve_location }}" type="video/webm"/>
@@ -30,7 +35,7 @@
           <a href="{{ url_for('user.profile', id=comment.replier_id) }}">
             <img class="img-rounded profile-thumbnail"
                  src="{{ comment.replier.gravatar(size=40) }}"
-          </a>x
+          </a>
         </div>
         <div class="post-date">{{ moment(comment.time).fromNow() }}</div>
         <div class="post-author">
@@ -48,6 +53,7 @@
 {% block scripts %}
   {{ super() }}
   <script src="{{ url_for('static', filename='lib/moment-with-locales.min.js') }}"></script>
+  {{ followbtnscript(video.poster_id,current_user.id == video.poster_id) }}
   <script>
     $('#submitcomment').click(function(){
         var comment = $('#commentarea').val();
@@ -67,5 +73,6 @@
             }
         });
     });
+    
   </script>
 {% endblock %}

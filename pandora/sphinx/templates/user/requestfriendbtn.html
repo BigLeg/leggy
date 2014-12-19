@@ -1,0 +1,24 @@
+﻿{% macro followbtnscript(userid,disabled = false) %}
+
+<script>
+{% if disabled %}
+$("#followbtn").attr("disabled","disabled");
+{% else %}
+$('#followbtn').click(function(){
+    $.ajax({
+        url :"{{ url_for('user.dofollow') }}",
+        data :{id:{{ userid }} },
+        type :  "POST",
+        dataType : "text",
+        success: function(text,textStats){
+            alert('follow success!');
+            $("#followbtn").attr("disabled","disabled");
+        },
+        error: function(xhr,textStatus,errorThrown){
+            alert("Sorry, there was an error!");
+        },
+    });
+});
+{% endif %}
+</script>
+{% endmacro %}
