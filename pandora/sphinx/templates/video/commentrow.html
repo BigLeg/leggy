@@ -1,0 +1,13 @@
+<div class="profile-thumbnail">
+  <a href="{{ url_for('user.profile', id=comment.replier_id) }}">
+    <img class="img-rounded profile-thumbnail"
+         src="{{ comment.replier.gravatar(size=40) }}"
+  </a>
+</div>
+<div class="post-date">{{ moment(comment.time).fromNow() }}</div>
+<div class="post-author">
+  <a href="{{ url_for('user.profile', id=comment.replier_id) }}">
+    {{ comment.replier.username }}
+  </a>
+</div>
+<div class="post-content">{{ comment.content }}</div>

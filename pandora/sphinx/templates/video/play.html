@@ -17,17 +17,20 @@
   <br/>
   <br/>
   <div class="row">
-    <div>
-      {{ wtf.quick_form(comment_form) }}
+    <div class="form">
+        <div class="form-group "><label class="control-label" for="body">Any Comments?</label>
+            <textarea class="form-control" id="commentarea" name="body" required></textarea>
+        </div>
+        <input class="btn btn-default" id="submitcomment" name="submit" type="button">
     </div>
-    <ul class="posts">
+    <ul class="posts" id="posts">
       {% for comment in comments %}
       <li class="post">
         <div class="profile-thumbnail">
           <a href="{{ url_for('user.profile', id=comment.replier_id) }}">
             <img class="img-rounded profile-thumbnail"
                  src="{{ comment.replier.gravatar(size=40) }}"
-          </a>
+          </a>x
         </div>
         <div class="post-date">{{ moment(comment.time).fromNow() }}</div>
         <div class="post-author">
@@ -45,4 +48,24 @@
 {% block scripts %}
   {{ super() }}
   <script src="{{ url_for('static', filename='lib/moment-with-locales.min.js') }}"></script>
+  <script>
+    $('#submitcomment').click(function(){
+        var comment = $('#commentarea').val();
+        $.ajax({
+            url :"{{ url_for('video.play', id=video.id)　}}",
+            data :{body:comment},
+            type :  "POST",
+            dataType : "html",
+            success: function(text,textStats){
+                $('<li class="post">').html(text).appendTo("#posts");
+            },
+            error: function(xhr,textStatus,errorThrown){
+                alert("Sorry, there was an error!");
+            },
+            complete: function(xhr,status){
+                alert("Request is complete!");
+            }
+        });
+    });
+  </script>
 {% endblock %}

@@ -7,6 +7,7 @@ from flask_wtf import Form
 from wtforms import TextAreaField, SubmitField
 from wtforms.validators import DataRequired
 from werkzeug.utils import secure_filename
+import json
 
 import util.video
 from model.video import Video
@@ -91,18 +92,21 @@ class CommentForm(Form):
 @login_required
 def play(id):
     video = Video.from_id(id)
-    comment_form = CommentForm()
     comments = video.comments
-    if comment_form.validate_on_submit():
-        Comment.comment(replier_id=current_user.id,
-                        content=comment_form.body.data,
-                        video_id=video.id)
-        # TODO: ajax request
-        # return video.comments
-        return 'hello'
+    if request.method == 'POST':
+        try:
+            commenttext = request.form['body']
+            print("*******commenttext="+commenttext+"***************")
+            cmt = Comment.comment(replier_id=current_user.id,
+                            content=commenttext,
+                            video_id=video.id)
+
+            return render_template('video/commentrow.html',
+                                comment=cmt)
+        except KeyError:
+            pass
     return render_template('video/play.html',
                            video=video,
-                           comment_form=comment_form,
                            comments=comments)
 
 @site.route("/delete/<id>", methods=['DELETE'])
