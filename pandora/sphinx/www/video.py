@@ -12,6 +12,7 @@ import util.video
 from model.video import Video
 from model.comment import Comment
 from model.user import User
+from model.notification import Notification
 
 site = Blueprint('video', __name__)
 
@@ -97,9 +98,11 @@ def play(id):
             cmt = Comment.comment(replier_id=current_user.id,
                             content=commenttext,
                             video_id=video.id)
-
-            return render_template('video/commentrow.html',
-                                comment=cmt)
+            video.poster.addnewnote(user_from=current_user.id,
+                                    type=Notification.TYPE_VIDEOCOMMENT,
+                                    video_id=str(video.id)) 
+            
+            return render_template('video/commentrow.html',comment=cmt)
         except KeyError:
             pass
     return render_template('video/play.html',

@@ -1,0 +1,27 @@
+﻿{% extends "base.html" %}
+
+{% block head %}
+  {{ super() }}
+
+{% endblock %}
+
+
+{% block page_content %}
+<h1>视频列表</h1>
+{% for row in videolist|batch(3) %}
+<div class="row">
+    {% for video in row %}
+        <div class="col-md-4">
+            <a class="thumbnail" href="{{ url_for('video.play',id=video.id) }}">
+                <img data-src="#" alt="...">
+                <div class="caption">
+                    <h3>{{video.title}}</h3>
+                    <p>上传者：{{ video.poster.username }}</p>
+                    <p>播放数：{{ video.play_count }}</p>
+                </div>
+            </a>
+        </div>
+    {% endfor %}
+</div>
+{% endfor %}
+{% endblock %}

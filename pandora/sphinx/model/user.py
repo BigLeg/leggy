@@ -1,4 +1,4 @@
-import hashlib
+﻿import hashlib
 import datetime
 
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -8,9 +8,14 @@ from flask import current_app, request
 
 from model import db
 from model import cache
+from model import follow_table
 from model.follow import Follow
 from model.video import Video
 from model.comment import Comment
+from model.notification import Notification
+
+
+                
 
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
@@ -35,17 +40,24 @@ class User(db.Model, UserMixin):
     videos          = db.relationship('Video', backref='poster', lazy='dynamic')
     comments        = db.relationship('Comment', backref='replier', foreign_keys=[Comment.replier_id], lazy='dynamic')
     replied         = db.relationship('Comment', backref='repliee', foreign_keys=[Comment.repliee_id], lazy='dynamic')
-    followees = db.relationship('Follow',
-                                foreign_keys=[Follow.follower_id],
-                                backref=db.backref('follower', lazy='joined'),
+    followees = db.relationship('User',
+                                secondary = follow_table,
+                                primaryjoin = (follow_table.c.follower_id == id),
+                                secondaryjoin = (follow_table.c.followee_id == id),
+                                backref=db.backref('followers', lazy='dynamic'),
                                 lazy='dynamic',
-                                cascade='all, delete-orphan')
-    followers = db.relationship('Follow',
-                                foreign_keys=[Follow.followee_id],
-                                backref=db.backref('followee', lazy='joined'),
-                                lazy='dynamic',
-                                cascade='all, delete-orphan')
-
+                                )
+    notifications = db.relationship('Notification',
+                                    foreign_keys=[Notification.userid_to],
+                                    backref=db.backref('user_to',lazy='joined'),
+                                    lazy='dynamic',
+                                    cascade='all, delete-orphan')
+    sends = db.relationship('Notification',
+                            foreign_keys=[Notification.userid_from],
+                            backref=db.backref('user_from',lazy='joined'),
+                            lazy='dynamic',
+                            cascade='all,delete-orphan')
+    
     def __repr__(self):
         return '<User %r>' % self.username
 
@@ -151,8 +163,31 @@ class User(db.Model, UserMixin):
             url=url, hash=hash, size=size, default=default, rating=rating)
             
     def addfollower(self,follower):
-        fol = Follow(follower_id = follower,followee_id = self.id)
-        db.session.add(fol)
+        if True:
+            self.followers.append(follower)
+
+    def follow(self,user):
+        if not self.is_following(user):
+            self.followees.append(user)
+            
+    def is_following(self,user):
+        return self.followees.filter_by(id=user.id).count() == 1
+        
+    def addnewnote(self,user_from,type,video_id=None):
+        note = Notification(userid_from = user_from,
+                            userid_to = self.id,
+                            type=type,
+                            video_id=video_id,
+                            read=False)
+        db.session.add(note)
         db.session.commit()
         
-    
+    def get_unreadmsg(self):
+        return Notification.query.filter_by(userid_to = self.id,read=False).order_by(Notification.time.desc())
+        
+    def get_allmsg(self):
+        return Notification.query.filter_by(userid_to = self.id).order_by(Notification.time.desc())
+        
+    def getfriends(self):
+        return self.followees.filter(follow_table.c.follower_id == self.id).all()
+        

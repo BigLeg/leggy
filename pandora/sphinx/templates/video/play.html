@@ -11,7 +11,9 @@
   <div>
     <h2>{{ video.title }}</h2>
     <a href="{{ url_for('user.profile',id=video.poster_id) }}">{{ video.poster.username }}</a>
+    {% if current_user.id != video.poster_id %}
     <button id="followbtn" class="btn btn-primary">关注TA</button>
+    {% endif %}
   </div>
   <div class="row">
     <video controls class="col-md-8 col-md-offset-2">
@@ -53,7 +55,9 @@
 {% block scripts %}
   {{ super() }}
   <script src="{{ url_for('static', filename='lib/moment-with-locales.min.js') }}"></script>
-  {{ followbtnscript(video.poster_id,current_user.id == video.poster_id) }}
+  {% if current_user.id != video.poster_id %}
+    {{ followbtnscript(video.poster_id,current_user.id == video.poster_id) }}
+  {% endif %}
   <script>
     $('#submitcomment').click(function(){
         var comment = $('#commentarea').val();

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+
+{% block head %}
+  {{ super() }}
+  <link href="{{ url_for('static', filename='css/profile.css') }}" rel="stylesheet" media="screen">
+{% endblock %}
+
+{% block page_content %}
+<table class="table">
+    <tr>
+        <th>消息</th>
+        <th>时间</th>
+    </tr>
+    {% for msg in msglist %}
+    <tr>
+        <td>
+            {% if msg.read == False %}
+            <b>[未读]
+            {% endif %}
+            <img class="img-rounded" src="{{ msg.user_from.gravatar(size=256) }}"/>
+            {% if msg.type == 0 %}
+                <a href="{{ url_for('user.profile',id=msg.userid_from) }}">{{ msg.user_from.username }}</a>关注了你。
+            {% elif msg.type == 1 %}
+                <a href="{{ url_for('user.profile',id=msg.userid_from) }}">{{ msg.user_from.username }}</a>评论了你的视频——
+                    <a href="{{ url_for('video.play',id=msg.content) }}">{{ msg.related_video.title }}</a>
+            {% else %}
+                <a href="{{ url_for('user.profile',id=msg.userid_from) }}">{{ msg.user_from.username }}</a>向你分享了视频——
+                    <a href="{{ url_for('video.play',id=msg.content) }}">{{ msg.related_video.title }}</a>
+            {% endif %}
+            {% if msg.read == False %}
+            </b>
+            {% endif %}
+        </td>
+        <td>{{ msg.time }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
+

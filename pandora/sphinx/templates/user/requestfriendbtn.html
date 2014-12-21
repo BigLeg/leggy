@@ -2,7 +2,7 @@
 
 <script>
 {% if disabled %}
-$("#followbtn").attr("disabled","disabled");
+$("#followbtn").attr("disabled","disabled").text("已关注");
 {% else %}
 $('#followbtn').click(function(){
     $.ajax({
@@ -12,7 +12,7 @@ $('#followbtn').click(function(){
         dataType : "text",
         success: function(text,textStats){
             alert('follow success!');
-            $("#followbtn").attr("disabled","disabled");
+            $("#followbtn").attr("disabled","disabled").text("已关注");
         },
         error: function(xhr,textStatus,errorThrown){
             alert("Sorry, there was an error!");
