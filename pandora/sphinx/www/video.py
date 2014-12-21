@@ -7,13 +7,12 @@ from flask_wtf import Form
 from wtforms import TextAreaField, SubmitField
 from wtforms.validators import DataRequired
 from werkzeug.utils import secure_filename
-import json
 
 import util.video
 from model.video import Video
 from model.comment import Comment
 from model.user import User
-from model.comment import Comment
+from model.notification import Notification
 
 site = Blueprint('video', __name__)
 
@@ -96,13 +95,14 @@ def play(id):
     if request.method == 'POST':
         try:
             commenttext = request.form['body']
-            print("*******commenttext="+commenttext+"***************")
             cmt = Comment.comment(replier_id=current_user.id,
                             content=commenttext,
                             video_id=video.id)
-
-            return render_template('video/commentrow.html',
-                                comment=cmt)
+            video.poster.addnewnote(user_from=current_user.id,
+                                    type=Notification.TYPE_VIDEOCOMMENT,
+                                    video_id=str(video.id)) 
+            
+            return render_template('video/commentrow.html',comment=cmt)
         except KeyError:
             pass
     return render_template('video/play.html',

@@ -5,11 +5,29 @@
   <link href="{{ url_for('static', filename='css/profile.css') }}" rel="stylesheet" media="screen">
 {% endblock %}
 
+{% from 'user/requestfriendbtn.html' import followbtnscript %}
 {% block page_content %}
 <div class="page-header">
-  <img class="img-rounded profile-thumbnail" src="{{ user.gravatar(size=256) }}">
+  <img class="img-rounded profile-thumbnail" src="{{ user.gravatar(size=256) }}"/>
   <div class="profile-header">
     <h1>{{ user.username }}</h1>
+    {% if current_user.id != user.id %}
+    <button id="followbtn" class="btn btn-primary">关注TA</button>
+    {% endif %}
+    <h2>粉丝：<a href="{{ url_for('user.userlist',type='followers',id=user.id) }}">{{ user.followers.count() }}</a></h2>
+    <h2>关注：<a href="{{ url_for('user.userlist',type='followees',id=user.id) }}">{{ user.followees.count() }}</a></h2>
+    <h2>视频：<a href="{{ url_for('user.videolist',userid=user.id) }}">{{ user.videos.count() }}</a></h2>
+  </div>
+  <div class="profile-rows">
+    <p>{{ user.email }}</p>
   </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+{% if current_user.id != user.id %}
+    {{ followbtnscript(user.id,current_user.is_following(user)) }}
+
+{% endif %}
 {% endblock %}

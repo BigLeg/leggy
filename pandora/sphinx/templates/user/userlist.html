@@ -1,0 +1,40 @@
+﻿{% extends "base.html" %}
+
+{% block head %}
+  {{ super() }}
+{% endblock %}
+
+{% block page_content %}
+<ul class="nav nav-tabs"/>
+    <li role="presentation"{% if type=='followers' %}class="active"{% endif %}>
+        <a href="{{ url_for('user.userlist',type='followers',id=user.id) }}">粉丝</a>
+    </li>
+    <li role="presentation"{% if type=='followees' %}class="active"{% endif %}>
+        <a href="{{ url_for('user.userlist',type='followees',id=user.id) }}">关注</a>
+    </li>
+    <li role="presentation"{% if type=='friends' %}class="active"{% endif %}>
+        <a href="{{ url_for('user.userlist',type='friends',id=user.id) }}">好友</a>
+    </li>
+<ul>
+<h1>
+    {{ user.username }}
+    {% if type=='followers' %}
+    的粉丝
+    {% elif type=='followees' %}
+    的关注
+    {% else %}
+    的好友
+    {% endif %}
+</h1>
+<table class="table">
+    {% for user in userlist %}
+        <tr>
+            <td><a href="{{ url_for('user.profile',id=user.id) }}">
+            <img class="img-rounded profile-thumbnail" src="{{ user.gravatar(size=256) }}"/>
+            </a></td>
+            <td><a href="{{ url_for('user.profile',id=user.id) }}">{{ user.username }}</a></td>
+            <td>{{ user.email }}</td>
+        </tr>
+    {% endfor %}
+</table>
+{% endblock %}
