@@ -10,7 +10,6 @@
 {% block page_content %}
   <div>
     <h2>{{ video.title }}</h2>
-    <a href="{{ url_for('user.profile',id=video.poster_id) }}">{{ video.poster.username }}</a>
     {% if current_user.id != video.poster_id %}
     <button id="followbtn" class="btn btn-primary">关注TA</button>
     {% endif %}
@@ -22,6 +21,16 @@
     </video>
   </div>
   <br/>
+  <p>上传者：<a href="{{ url_for('user.profile',id=video.poster_id) }}">{{ video.poster.username }}</a></p>
+  <p>播放数：{{ video.play_count }}
+  <div class="dropdown">
+    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="true" id="sharebutton">
+        +分享
+        <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu" role="menu" aria-labelledby="sharebutton" id="share-dropdownlist">
+    </ul>
+  </div>
   <br/>
   <div class="row">
     <div class="form">
@@ -59,24 +68,54 @@
     {{ followbtnscript(video.poster_id,current_user.id == video.poster_id) }}
   {% endif %}
   <script>
-    $('#submitcomment').click(function(){
-        var comment = $('#commentarea').val();
-        $.ajax({
-            url :"{{ url_for('video.play', id=video.id)　}}",
-            data :{body:comment},
-            type :  "POST",
-            dataType : "html",
-            success: function(text,textStats){
-                $('<li class="post">').html(text).appendTo("#posts");
-            },
-            error: function(xhr,textStatus,errorThrown){
-                alert("Sorry, there was an error!");
-            },
-            complete: function(xhr,status){
-                alert("Request is complete!");
-            }
-        });
+  $('#submitcomment').click(function(){
+    var comment = $('#commentarea').val();
+    $.ajax({
+        url :"{{ url_for('video.play', id=video.id)　}}",
+        data :{body:comment},
+        type :  "POST",
+        dataType : "html",
+        success: function(text,textStats){
+            $('<li class="post">').html(text).appendTo("#posts");
+        },
+        error: function(xhr,textStatus,errorThrown){
+            alert("Sorry, there was an error!");
+        },
+        complete: function(xhr,status){
+        }
     });
-    
+});
+
+$('#sharebutton').click(function(){
+    $('#share-dropdownlist').empty()
+    $.ajax({
+        url : " {{ url_for('video.sharefriendlist') }}",
+        data: {userid:{{ current_user.id }} },
+        type: "POST",
+        dataType : "html",
+        success: function(text,textStats){
+            $(text).appendTo("#share-dropdownlist");
+            $('#sharebutton').dropdown()
+        },
+        error: function(xhr,textStatus,errorThrown){
+            alert("There was an error!");
+        }
+    });
+});
+
+function shareonclick(id){
+    $.ajax({
+        url:"{{ url_for('video.doshare') }}",
+        data:{ videoid:{{ video.id }},userid:id },
+        type:"POST",
+        dataType: "text",
+        success:function(text,textStats){
+            alert("Share success!");
+        },
+        error: function(xhr,textStatus,errorThrown){
+            alert("Share failed!");
+        }
+    })
+}
   </script>
 {% endblock %}

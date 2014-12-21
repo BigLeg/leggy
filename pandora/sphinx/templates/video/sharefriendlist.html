@@ -1,0 +1,7 @@
+{% for user in friendlist %}
+<li role="presentation">
+<a role="menuitem" tabindex="-1" onclick="shareonclick({{ user.id }})">
+<img class="img-rounded" src="{{ user.gravatar(size=256) }}"/>
+{{ user.username }}
+</a></li>
+{% endfor %}

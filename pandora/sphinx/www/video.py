@@ -105,6 +105,7 @@ def play(id):
             return render_template('video/commentrow.html',comment=cmt)
         except KeyError:
             pass
+    video.play_count += 1
     return render_template('video/play.html',
                            video=video,
                            comments=comments)
@@ -118,5 +119,29 @@ def delete(id):
         abort(404)
     video.delete()
     return get_current_videos()
+    
+@site.route("/sharefriendlist",methods=['POST'])
+@login_required
+def sharefriendlist():
+    try:
+        user_id = request.form['userid']
+    except KeyError:
+        abort(400)
+    user = User.from_id(user_id)
+    return render_template('video/sharefriendlist.html',friendlist = user.getfriends())
 
+@site.route("/doshare",methods=['POST'])
+@login_required
+def doshare():
+    try:
+        video_id = request.form['videoid']
+        user_id = request.form['userid']
+    except KeyError:
+        abort(400)
+    user = User.from_id(user_id)
+    user.addnewnote(user_from = current_user.id,
+                    type = Notification.TYPE_VIDEOSHARE,
+                    video_id = video_id)
+                    
+    return 'success'
 
