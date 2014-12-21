@@ -1,4 +1,5 @@
 from werkzeug.debug import DebuggedApplication
+from admin.admin import init_admin
 
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
@@ -21,6 +22,7 @@ else:
     from www.home import site as home_site
     from www.user import site as user_site
     from www.video import site as video_site
+
     
 app.register_blueprint(home_site)
 app.register_blueprint(user_site, url_prefix='/user')
@@ -37,6 +39,9 @@ moment = Moment(app)
 db.init_app(app)
 cache.init_app(app)
 login_manager.init_app(app)
+admin = init_admin(app)
 
 if (app.debug):
     debug_app = DebuggedApplication(app, evalex=True)
+    
+
