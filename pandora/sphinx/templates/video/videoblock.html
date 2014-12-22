@@ -1,0 +1,13 @@
+﻿{% macro videoblock(video) %}
+
+<a class="thumbnail" href="{{ url_for('video.play',id=video.id) }}">
+    <img data-src="#" alt="...">
+    <div class="caption">
+        <h3>{{video.title}}</h3>
+        <p>上传者：{{ video.poster.username }}</p>
+        <p>上传时间：{{ video.upload_time }}
+        <p>播放数：{{ video.play_count }}</p>
+    </div>
+</a>
+
+{% endmacro %}
