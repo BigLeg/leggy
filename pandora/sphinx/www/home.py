@@ -5,6 +5,8 @@ site = Blueprint('home', 'www.home')
 
 @site.route('/')
 def index():
-    #Video.hottest()
-    #Video.newest()
-    return render_template('index.html')
+    hottest = Video.hottest()
+    newest = Video.newuploaded()
+    return render_template('index.html',
+                            hottestvideos = hottest,
+                            newestvideos = newest)

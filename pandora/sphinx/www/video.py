@@ -145,3 +145,11 @@ def doshare():
                     
     return 'success'
 
+@site.route("/searchvideo",methods=['GET'])
+def searchvideo():
+    try:
+        keyword = request.args.get('keyword','')
+    except KeyError:
+        abort(400)
+    videolist = Video.search(keyword)
+    return render_template('video/videolist.html',videolist=videolist)

@@ -49,9 +49,9 @@
           {% else %}
           <li><a href="{{ url_for('auth.login') }}">登陆</a></li>
           {% endif %}
-            <form class="navbar-form navbar-right" role="form">
+            <form class="navbar-form navbar-right" role="form" action="{{ url_for('video.searchvideo') }}",method="get">
 
-                <input type="text" placeholder="搜索" class="form-control" />
+                <input type="text" placeholder="搜索" class="form-control" name="keyword"/>
 
                 <button type="submit" class="btn btn-success">搜索</button>
             </form>

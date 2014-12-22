@@ -61,12 +61,13 @@ class Video(db.Model):
         db.session.commit()
         
     @staticmethod
-    def hottest(cnt=10):
-        pass
+    def hottest(cnt=4):
+        return Video.query.order_by(Video.play_count.desc()).limit(cnt)
     
     @staticmethod
-    def newlyuploaded(cnt=10):
-        pass
+    def newuploaded(cnt=4):
+        return Video.query.order_by(Video.upload_time.desc()).limit(cnt)
         
-    def addcomment(self,userid,content):
-        pass
+    @staticmethod
+    def search(keyword):
+        return Video.query.filter(Video.title.like('%'+keyword+'%'))
